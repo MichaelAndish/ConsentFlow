@@ -1,0 +1,28 @@
+# Dependencies & builds
+node_modules/
+build/
+dist/
+coverage/
+.vite/
+.history/
+
+# OS / logs
+.DS_Store
+*.log
+
+# Secrets & local env (keep .env.example)
+.env
+.env.*
+!.env.example
+
+# AI Studio / editor scratch
+.aistudio/
+
+# Alternate package manager lock (npm is canonical)
+bun.lock
+
+# Optional local overrides
+*.pem
+*.p12
+credentials.json
+service-account*.json

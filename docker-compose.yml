@@ -1,0 +1,46 @@
+services:
+  # Local PostgreSQL 16 Service (100% compatible with Google Cloud SQL for PostgreSQL)
+  db:
+    image: postgres:16-alpine
+    container_name: consentflow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: consentflow_db
+      POSTGRES_USER: consentflow
+      POSTGRES_PASSWORD: consentflow_secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U consentflow -d consentflow_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  # ConsentFlow Application Container
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: consentflow-app
+    restart: unless-stopped
+    ports:
+      - "1110:8080"
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      - DATABASE_URL=postgresql://consentflow:consentflow_secret@db:5432/consentflow_db
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT:-qwiklabs-gcp-01-d64f5abfabdc}
+      - GOOGLE_CLOUD_REGION=${GOOGLE_CLOUD_REGION:-europe-west1}
+      - GCS_DEFAULT_BUCKET=${GCS_DEFAULT_BUCKET:-use-cases-qwiklabs-gcp-01-d64f5abfabdc}
+      - GCS_BUCKET_NAME=${GCS_BUCKET_NAME:-use-cases-qwiklabs-gcp-01-d64f5abfabdc}
+      - GCS_BUCKET_URI=${GCS_BUCKET_URI:-gs://use-cases-qwiklabs-gcp-01-d64f5abfabdc/}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-3.8-flash}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

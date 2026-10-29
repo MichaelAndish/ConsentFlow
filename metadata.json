@@ -1,0 +1,6 @@
+{
+  "name": "ConsentFlow — BSPHO ICF Workbench",
+  "description": "Paediatric clinical research Informed Consent Form (ICF) preparation, translation, review, and consistency workbench for BSPHO.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
